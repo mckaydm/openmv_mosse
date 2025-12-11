@@ -1,11 +1,3 @@
-# This work is licensed under the MIT license.
-# Copyright (c) 2013-2023 OpenMV LLC. All rights reserved.
-# https://github.com/openmv/openmv/blob/master/LICENSE
-#
-# Hello World Example
-#
-# Welcome to the OpenMV IDE! Click on the green run arrow button below to run the script!
-
 import sensor
 import time
 import mosse
@@ -24,10 +16,16 @@ bbox = [100, 70, 50, 50]  # Example bounding box [x, y, w, h]
 
 init_img = sensor.snapshot()
 
-if tracker.start(init_img, bbox):
-    print("tracker initialized")
-    print("Ai")
-    print(tracker.Ai)
-    print(" ")
-    print("Bi")
-    print(tracker.Bi)
+tracker.start(init_img, bbox)
+
+while(True):
+    clock.tick()  # Update the FPS clock.
+    img = sensor.snapshot()  # Take a picture and return the image.
+    bbox = tracker.update(img)
+
+    print("Updated bounding box:", bbox)
+    if bbox:
+        img.draw_rectangle(bbox)
+
+    print("FPS:", clock.fps())  # Note: OpenMV Cam runs about half as fast when connected
+    # to the IDE. The FPS should increase once disconnected.
